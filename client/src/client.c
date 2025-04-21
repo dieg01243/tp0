@@ -28,7 +28,7 @@ int main(void)
 	config = iniciar_config();
 	char* CLAVE = config_get_string_value	(	config 	,"CLAVE");
     log_info (logger, CLAVE);
-	log_destroy (logger);
+	
 	// Usando el config creado previamente, leemos los valores del config y los 
 	// dejamos en las variables 'ip', 'puerto' y 'valor'
 
@@ -37,7 +37,7 @@ int main(void)
 
 	/* ---------------- LEER DE CONSOLA ---------------- */
     t_log* logConsola = iniciar_logger();
-	leer_consola(logConsola);
+	//leer_consola(logConsola);
 	
 
 	/*---------------------------------------------------PARTE 3-------------------------------------------------------------*/
@@ -45,12 +45,13 @@ int main(void)
 	// ADVERTENCIA: Antes de continuar, tenemos que asegurarnos que el servidor esté corriendo para poder conectarnos a él
 
 	// Creamos una conexión hacia el servidor
-	conexion = crear_conexion(ip, puerto);
+	conexion = crear_conexion("127.0.0.1", "4444");
 
 	// Enviamos al servidor el valor de CLAVE como mensaje
+	enviar_mensaje("que onda",conexion);
 
 	// Armamos y enviamos el paquete
-	paquete(conexion);
+	
 
 	terminar_programa(conexion, logger, config);
 
@@ -119,4 +120,7 @@ void terminar_programa(int conexion, t_log* logger, t_config* config)
 {
 	/* Y por ultimo, hay que liberar lo que utilizamos (conexion, log y config) 
 	  con las funciones de las commons y del TP mencionadas en el enunciado */
+	  liberar_conexion(conexion);
+	  log_destroy(logger);
+	  config_destroy (config);
 }

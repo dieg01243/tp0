@@ -21,7 +21,7 @@ typedef enum
 
 extern t_log* logger;
 
-void* recibir_buffer(int*, int);
+char* recibir_buffer(int);
 
 int iniciar_servidor(void);
 int esperar_cliente(int);

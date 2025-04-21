@@ -1,4 +1,5 @@
 #include"utils.h"
+#include <netdb.h>
 
 t_log* logger;
 
@@ -30,7 +31,7 @@ int iniciar_servidor(void)
 	// Escuchamos las conexiones entrantes
 	setsockopt(socket_servidor, SOL_SOCKET, SO_REUSEPORT, &(int){1}, sizeof(int));
     bind(socket_servidor, servinfo->ai_addr, servinfo->ai_addrlen);
-    listen(socket_servidor SOMAXCONN);
+    listen(socket_servidor, SOMAXCONN);
 
 	//int conexionReal = accept(socket_escucha, NULL, NULL);
 
@@ -42,10 +43,6 @@ int iniciar_servidor(void)
 
 int esperar_cliente(int socket_servidor)
 {
-	// Quitar esta línea cuando hayamos terminado de implementar la funcion
-	assert(!"no implementado!");
-
-	// Aceptamos un nuevo cliente
 	
 	int socket_cliente;
 	socket_cliente = accept(socket_servidor, NULL, NULL);
@@ -54,36 +51,14 @@ int esperar_cliente(int socket_servidor)
 	return socket_cliente;
 }
 
-//int recibir_operacion(int socket_cliente)
+char* recibir_buffer(int socket_cliente)
 {
-	int cod_op;
-	if(recv(socket_cliente, &cod_op, sizeof(int), MSG_WAITALL) > 0)
-		return cod_op;
-	else
-	{
-		close(socket_cliente);
-		return -1;
-	}
-}
-
-//void* recibir_buffer(int* size, int socket_cliente)
-{
-	void * buffer;
-
-	recv(socket_cliente, size, sizeof(int), MSG_WAITALL);
-	buffer = malloc(*size);
-	recv(socket_cliente, buffer, *size, MSG_WAITALL);
-
-	return buffer;
-}
-
-void* recibir_buffer(int socket_cliente)
-{
-	char buffer[50];
+	char* buffer = malloc(50);
+	int size =50;
 
 	
 	
-	recv(socket_cliente, buffer, sizeof(buffer), MSG_WAITALL);
+	recv(socket_cliente, buffer, size, MSG_WAITALL);
 
 	return buffer;
 }
@@ -96,24 +71,4 @@ void recibir_mensaje(int socket_cliente)
 	free(buffer);
 }
 
-//t_list* recibir_paquete(int socket_cliente)
-{
-	int size;
-	int desplazamiento = 0;
-	void * buffer;
-	t_list* valores = list_create();
-	int tamanio;
 
-	buffer = recibir_buffer(&size, socket_cliente);
-	while(desplazamiento < size)
-	{
-		memcpy(&tamanio, buffer + desplazamiento, sizeof(int));
-		desplazamiento+=sizeof(int);
-		char* valor = malloc(tamanio);
-		memcpy(valor, buffer+desplazamiento, tamanio);
-		desplazamiento+=tamanio;
-		list_add(valores, valor);
-	}
-	free(buffer);
-	return valores;
-}
