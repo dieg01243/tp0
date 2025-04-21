@@ -1,0 +1,22 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+      {
+        "label": "build client",
+        "type": "shell",
+        "command": "gcc",
+        "args": [
+          "client/src/client.c",
+          "-o",
+          "client/client"
+        ],
+        "group": {
+          "kind": "build",
+          "isDefault": true
+        },
+        "problemMatcher": []
+      }
+    ]
+  }
+  
+  

@@ -5,7 +5,7 @@ t_log* logger;
 int iniciar_servidor(void)
 {
 	// Quitar esta línea cuando hayamos terminado de implementar la funcion
-	assert(!"no implementado!");
+	//assert(!"no implementado!");
 
 	int socket_servidor;
 
@@ -19,10 +19,20 @@ int iniciar_servidor(void)
 	getaddrinfo(NULL, PUERTO, &hints, &servinfo);
 
 	// Creamos el socket de escucha del servidor
+	socket_servidor= socket(
+		servinfo->ai_family,
+		servinfo->ai_socktype,
+		servinfo->ai_protocol
+	);
 
 	// Asociamos el socket a un puerto
 
 	// Escuchamos las conexiones entrantes
+	setsockopt(socket_servidor, SOL_SOCKET, SO_REUSEPORT, &(int){1}, sizeof(int));
+    bind(socket_servidor, servinfo->ai_addr, servinfo->ai_addrlen);
+    listen(socket_servidor SOMAXCONN);
+
+	//int conexionReal = accept(socket_escucha, NULL, NULL);
 
 	freeaddrinfo(servinfo);
 	log_trace(logger, "Listo para escuchar a mi cliente");
@@ -36,13 +46,15 @@ int esperar_cliente(int socket_servidor)
 	assert(!"no implementado!");
 
 	// Aceptamos un nuevo cliente
+	
 	int socket_cliente;
+	socket_cliente = accept(socket_servidor, NULL, NULL);
 	log_info(logger, "Se conecto un cliente!");
 
 	return socket_cliente;
 }
 
-int recibir_operacion(int socket_cliente)
+//int recibir_operacion(int socket_cliente)
 {
 	int cod_op;
 	if(recv(socket_cliente, &cod_op, sizeof(int), MSG_WAITALL) > 0)
@@ -54,7 +66,7 @@ int recibir_operacion(int socket_cliente)
 	}
 }
 
-void* recibir_buffer(int* size, int socket_cliente)
+//void* recibir_buffer(int* size, int socket_cliente)
 {
 	void * buffer;
 
@@ -65,15 +77,26 @@ void* recibir_buffer(int* size, int socket_cliente)
 	return buffer;
 }
 
+void* recibir_buffer(int socket_cliente)
+{
+	char buffer[50];
+
+	
+	
+	recv(socket_cliente, buffer, sizeof(buffer), MSG_WAITALL);
+
+	return buffer;
+}
+
 void recibir_mensaje(int socket_cliente)
 {
 	int size;
-	char* buffer = recibir_buffer(&size, socket_cliente);
+	char* buffer = recibir_buffer(socket_cliente);
 	log_info(logger, "Me llego el mensaje %s", buffer);
 	free(buffer);
 }
 
-t_list* recibir_paquete(int socket_cliente)
+//t_list* recibir_paquete(int socket_cliente)
 {
 	int size;
 	int desplazamiento = 0;
